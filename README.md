@@ -1,117 +1,227 @@
-
 ```markdown
-# 🛡️ Pterodactyl Protect
+# 🛡️ Pterodactyl Protect Scripts
 
-Script proteksi untuk panel Pterodactyl yang mencegah akses tidak sah dan modifikasi oleh user biasa.
+Kumpulan script bash untuk ngeproteksi panel Pterodactyl dari tangan-tangan jahil. Buat yang punya panel Pterodactyl dan mau aman dari admin lain yang sok mau hapus-hapus server atau utak-atik settingan.
 
-## 📋 Fitur Proteksi
+## 🎯 Buat Siapa Ini?
 
-### 🛡️ Protect 1 - Anti Delete Server
-- Hanya admin ID 1 yang bisa hapus server user lain
-- User biasa hanya bisa hapus server milik sendiri
+- **Pemilik Panel** yang punya banyak admin tapi mau tetap kontrol penuh
+- **Reseller** yang mau kasih akses panel ke client tanpa takut diobok-obok
+- **Yang lagi jual VPS/Server** dan mau restrict akses admin lainnya
 
-### 🛡️ Protect 2 - Anti Modifikasi Server  
-- Hanya admin ID 1 yang bisa ubah detail server
-- User biasa tidak bisa ubah nama, owner, dll
+## 📦 Daftar Proteksi
 
-### 🛡️ Protect 3 - Anti Akses Server
-- User hanya bisa akses server milik sendiri
-- Tidak bisa intip server user lain
+### 1. `protect_server_delete_modify.sh`
+**Yang Dicegah:**
+- Admin lain hapus server yang bukan punya mereka
+- Ganti detail server (nama, owner, dll) sembarangan
 
-### 🛡️ Protect ALL - Semua Proteksi
-- Install semua proteksi sekaligus
+**File yang Dimodif:**
+- `ServerDeletionService.php`
+- `DetailsModificationService.php`
 
-## 🚀 Cara Install
-
-### Via Bot Telegram (Recommended)
+**Pesan Error:**
 ```
 
-/installprotect 1    # Install proteksi 1
-/installprotect 2# Install proteksi 2
-/installprotect 3    # Install proteksi 3
-/installprotect all# Install semua proteksi
+"❌Akses ditolak: Wawes Sikontol Mau hapus server orang 😹,Anda hanya dapat menghapus server milik Anda sendiri @protect depstore"
 
 ```
 
-### Via Terminal SSH
+### 2. `protect_server_file_access.sh`
+**Yang Dicegah:**
+- Intip file server orang lain lewat file manager
+- Download file server yang bukan punya sendiri
+
+**File yang Dimodif:**
+- `ServerController.php`
+- `FileController.php`
+
+**Pesan Error:**
+```
+
+"𝗔𝗸𝘀𝗲𝘀 𝗗𝗶 𝗧𝗼𝗹𝗮𝗸❌. 𝗛𝗮𝗻𝘆𝗮 𝗕𝗶𝗹𝗮 𝗠𝗶𝗹𝗶𝗸 𝗦𝗲𝗻𝗱𝗶𝗿𝗶."
+
+```
+
+### 3. `protect_settings_access.sh`
+**Yang Dicegah:**
+- Admin lain buka halaman settings panel
+- Ubah-ubah setting panel
+
+**File yang Dimodif:**
+- `IndexController.php` (Settings)
+
+**Pesan Error:**
+```
+
+"BOCAH TOLOL NGINTIP NGINTIP"
+
+```
+
+### 4. `protect_nests_access.sh`
+**Yang Dicegah:**
+- Lihat atau utak-atik nests & eggs
+- Tambah/hapus nests
+
+**File yang Dimodif:**
+- `NestController.php`
+
+**Pesan Error:**
+```
+
+"🚫 Akses ditolak! Hanya admin utama (ID 1) yang bisa membuka menu Nests."
+
+```
+
+### 5. `protect_nodes_access.sh`
+**Yang Dicegah:**
+- Lihat daftar nodes
+- Akses detail node
+
+**File yang Dimodif:**
+- `NodeController.php`
+
+**Pesan Error:**
+```
+
+"🚫 Akses ditolak! Hanya admin ID 1 yang dapat membuka menu Nodes. ©protect by depstore"
+
+```
+
+### 6. `protect_locations_access.sh`
+**Yang Dicegah:**
+- Akses menu locations
+- Buat/hapus locations
+
+**File yang Dimodif:**
+- `LocationController.php`
+
+**Pesan Error:**
+```
+
+"BOCAH TOLOL NGINTIP NGINTIP"
+
+```
+
+### 7. `protect_user_management.sh`
+**Yang Dicegah:**
+- Hapus user lain (kecuali admin ID 1)
+- Ubah data user sensitif (email, password, dll)
+
+**File yang Dimodif:**
+- `UserController.php`
+
+**Pesan Error:**
+```
+
+"❌ Hanya admin ID 1 yang dapat menghapus user lain!"
+"⚠️Data hanya bisa diubah oleh admin ID 1."
+
+```
+
+## 🚀 Cara Pakai
+
+### Opsi 1: Pasang Semua Sekaligus
 ```bash
-# Proteksi 1
-bash <(curl -s https://raw.githubusercontent.com/depanSYZ/pterodactyl-protect/main/install_protect_1.sh)
+# Download script all-in-one
+wget https://raw.githubusercontent.com/depanSYZ/pterpdactyl-protect/installall.sh
 
-# Proteksi 2
-bash <(curl -s https://raw.githubusercontent.com/depanSYZ/pterodactyl-protect/main/install_protect_2.sh)
+# Kasih permission
+chmod +x install_protect_all.sh
 
-# Proteksi 3  
-bash <(curl -s https://raw.githubusercontent.com/depanSYZ/pterodactyl-protect/main/install_protect_3.sh)
-
-# Semua Proteksi
-bash <(curl -s https://raw.githubusercontent.com/depanSYZ/pterodactyl-protect/main/install_protect_all.sh)
+# Jalankan sebagai root
+sudo ./install_protect_all.sh
 ```
 
-🔧 Command Lainnya
+Opsi 2: Pasang Satu-Satu
 
 ```bash
-/statusprotect       # Cek status proteksi
-/backupprotect       # Backup file original  
-/uninstallprotect    # Hapus semua proteksi
+# Download semua script terpisah
+wget https://raw.githubusercontent.com/depanSYZ/pterpdactyl-protect/install2.sh
+wget https://raw.githubusercontent.com/depanSYZ/pterpdactyl-protect/install1.sh
+# ... dan seterusnya
+
+# Kasih permission
+chmod +x protect_*.sh
+
+# Jalankan sesuai kebutuhan
+sudo ./protect_server_delete_modify.sh
+sudo ./protect_settings_access.sh
+# ... dan seterusnya
 ```
 
-⚠️ Catatan Penting
+⚠️ Yang Perlu Diperhatiin
 
-1. Backup Otomatis: File original dibackup dengan format .bak_TIMESTAMP
-2. Hanya Root: Script harus dijalankan sebagai user root
-3. Clear Cache: Setelah install, jalankan php artisan optimize:clear
-4. Test Dulu: Selalu test di server development sebelum production
+Sebelum Install:
 
-🆘 Troubleshooting
+· Backup panel dulu, siapa tau ada yang error
+· Pastikan panel Pterodactyl udah terinstall di path default /var/www/pterodactyl
+· Pastikan kamu login sebagai root
 
-Error Permission Denied
+Setelah Install:
+
+· Script bakal bikin backup file original dengan format filename.bak_TIMESTAMP
+· Kalo mau restore, tinggal rename/balikin file backup-nya
+· Untuk apply perubahan, mungkin perlu restart queue: php artisan queue:restart
+
+Yang Bisa Akses:
+
+· Hanya user dengan ID 1 yang bisa akses semua fitur
+· Admin lain cuma bisa:
+  · Lihat & manage server mereka sendiri
+  · Akses file manager server mereka sendiri
+  · Gak bisa hapus/ubah server orang
+
+🔧 Troubleshooting
+
+Kalo Error Permission:
 
 ```bash
-chmod +x install_protect_*.sh
+sudo chmod +x *.sh
+sudo ./script_name.sh
 ```
 
-Error File Not Found
+Kalo File Gak Ketemu:
 
 · Pastikan Pterodactyl terinstall di /var/www/pterodactyl
-· Cek path dengan ls -la /var/www/pterodactyl/app/Services/Servers/
+· Cek path manual: ls -la /var/www/pterodactyl/app/
+
+Kalo Mau Uninstall:
+
+· Delete file yang dimodif, terus rename file backup:
+
+```bash
+mv /var/www/pterodactyl/app/Services/Servers/ServerDeletionService.php.bak_20241212_120000 /var/www/pterodactyl/app/Services/Servers/ServerDeletionService.php
+```
+
+🎭 Fitur Tambahan
+
+Auto Backup:
+
+Setiap file yang dimodif otomatis dibackup dengan timestamp, jadi aman kalo mau rollback.
+
+Error Message "Kasar":
+
+Pesan error sengaja dibuat kasar buat ngejailin admin yang iseng, bisa diubah sesuai selera.
+
+Restrict Horizontal & Vertical:
+
+· Horizontal: User biasa gak bisa akses server/user lain
+· Vertical: Admin biasa gak bisa akses fitur system (nodes, nests, settings)
 
 📞 Support
 
-· Telegram: @depstore11
-· GitHub: depanSYZ/pterodactyl-protect
+Kalo ada yang error atau mau tanya-tanya:
 
-⚖️ License
+· Buat issue di GitHub
+· Atau contact langsung
 
-MIT License - bebas digunakan untuk project pribadi dan komersial.
+⚖️ Disclaimer
 
-```
-1. Clone repository:
-```bash
-git clone https://github.com/depanSYZ/pterodactyl-protect.git
-cd pterodactyl-protect
-```
+Script ini dibuat buat keamanan panel kamu. Gunakan dengan bijak, jangan disalahgunakan. Author gak tanggung jawab kalo ada yang error atau panel jadi rusak, selalu backup dulu sebelum install!
 
-1. Copy semua file .sh dan README.md ke folder
-2. Commit dan push:
+---
 
-```bash
-git add .
-git commit -m "Add Pterodactyl protect scripts"
-git push origin main
-```
+Dibuat dengan ❤️ buat yang mau panel Pterodactyl-nya aman dan terkendali
 
-Step 3: Dapatkan RAW URL
-
-Format RAW URL:
-
-```
-https://raw.githubusercontent.com/depanSYZ/pterodactyl-protect/main/install_protect_1.sh
-https://raw.githubusercontent.com/depanSYZ/pterodactyl-protect/main/install_protect_2.sh
-https://raw.githubusercontent.com/depanSYZ/pterodactyl-protect/main/install_protect_3.sh  
-https://raw.githubusercontent.com/depanSYZ/pterodactyl-protect/main/install_protect_all.sh
-```
-```javascript
-// Ganti ini di fungsi installProtection()
-const command = `bash <(curl -s https://raw.githubusercontent.com/depanSYZ/pterodactyl-protect/main/install_protect_${type}.sh)`;
 ```
