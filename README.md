@@ -1,227 +1,227 @@
 ```markdown
 # 🛡️ Pterodactyl Protect Scripts
 
-Kumpulan script bash untuk ngeproteksi panel Pterodactyl dari tangan-tangan jahil. Buat yang punya panel Pterodactyl dan mau aman dari admin lain yang sok mau hapus-hapus server atau utak-atik settingan.
+Collection of bash scripts to protect your Pterodactyl panel from unauthorized access. For Pterodactyl panel owners who want to secure their panel from other admins trying to delete servers or modify settings without permission.
 
-## 🎯 Buat Siapa Ini?
+## 🎯 Who This Is For?
 
-- **Pemilik Panel** yang punya banyak admin tapi mau tetap kontrol penuh
-- **Reseller** yang mau kasih akses panel ke client tanpa takut diobok-obok
-- **Yang lagi jual VPS/Server** dan mau restrict akses admin lainnya
+- **Panel Owners** who have multiple admins but want to maintain full control
+- **Resellers** who want to give panel access to clients without worrying about misuse
+- **VPS/Server Providers** who need to restrict access for other admins
 
-## 📦 Daftar Proteksi
+## 📦 Protection List
 
 ### 1. `protect_server_delete_modify.sh`
-**Yang Dicegah:**
-- Admin lain hapus server yang bukan punya mereka
-- Ganti detail server (nama, owner, dll) sembarangan
+**What It Prevents:**
+- Other admins deleting servers they don't own
+- Unauthorized modification of server details (name, owner, etc.)
 
-**File yang Dimodif:**
+**Modified Files:**
 - `ServerDeletionService.php`
 - `DetailsModificationService.php`
 
-**Pesan Error:**
+**Error Message:**
 ```
 
-"❌Akses ditolak: Wawes Sikontol Mau hapus server orang 😹,Anda hanya dapat menghapus server milik Anda sendiri @protect depstore"
+"❌ Access Denied: You can only delete your own servers @protect depstore"
 
 ```
 
 ### 2. `protect_server_file_access.sh`
-**Yang Dicegah:**
-- Intip file server orang lain lewat file manager
-- Download file server yang bukan punya sendiri
+**What It Prevents:**
+- Peeking into other users' server files through file manager
+- Downloading files from servers they don't own
 
-**File yang Dimodif:**
+**Modified Files:**
 - `ServerController.php`
 - `FileController.php`
 
-**Pesan Error:**
+**Error Message:**
 ```
 
-"𝗔𝗸𝘀𝗲𝘀 𝗗𝗶 𝗧𝗼𝗹𝗮𝗸❌. 𝗛𝗮𝗻𝘆𝗮 𝗕𝗶𝗹𝗮 𝗠𝗶𝗹𝗶𝗸 𝗦𝗲𝗻𝗱𝗶𝗿𝗶."
+"𝗔𝗰𝗰𝗲𝘀𝘀 𝗗𝗲𝗻𝗶𝗲𝗱❌. 𝗢𝗻𝗹𝘆 𝗔𝗹𝗹𝗼𝘄𝗲𝗱 𝗳𝗼𝗿 𝗢𝘄𝗻𝗲𝗿𝘀."
 
 ```
 
 ### 3. `protect_settings_access.sh`
-**Yang Dicegah:**
-- Admin lain buka halaman settings panel
-- Ubah-ubah setting panel
+**What It Prevents:**
+- Other admins accessing panel settings page
+- Modifying panel settings
 
-**File yang Dimodif:**
+**Modified Files:**
 - `IndexController.php` (Settings)
 
-**Pesan Error:**
+**Error Message:**
 ```
 
-"BOCAH TOLOL NGINTIP NGINTIP"
+"Access Denied: Unauthorized Settings Access"
 
 ```
 
 ### 4. `protect_nests_access.sh`
-**Yang Dicegah:**
-- Lihat atau utak-atik nests & eggs
-- Tambah/hapus nests
+**What It Prevents:**
+- Viewing or modifying nests & eggs
+- Adding/deleting nests
 
-**File yang Dimodif:**
+**Modified Files:**
 - `NestController.php`
 
-**Pesan Error:**
+**Error Message:**
 ```
 
-"🚫 Akses ditolak! Hanya admin utama (ID 1) yang bisa membuka menu Nests."
+"🚫 Access Denied! Only main admin (ID 1) can access Nests menu."
 
 ```
 
 ### 5. `protect_nodes_access.sh`
-**Yang Dicegah:**
-- Lihat daftar nodes
-- Akses detail node
+**What It Prevents:**
+- Viewing node list
+- Accessing node details
 
-**File yang Dimodif:**
+**Modified Files:**
 - `NodeController.php`
 
-**Pesan Error:**
+**Error Message:**
 ```
 
-"🚫 Akses ditolak! Hanya admin ID 1 yang dapat membuka menu Nodes. ©protect by depstore"
+"🚫 Access Denied! Only admin ID 1 can access Nodes menu. ©protect by depstore"
 
 ```
 
 ### 6. `protect_locations_access.sh`
-**Yang Dicegah:**
-- Akses menu locations
-- Buat/hapus locations
+**What It Prevents:**
+- Accessing locations menu
+- Creating/deleting locations
 
-**File yang Dimodif:**
+**Modified Files:**
 - `LocationController.php`
 
-**Pesan Error:**
+**Error Message:**
 ```
 
-"BOCAH TOLOL NGINTIP NGINTIP"
+"Access Denied: Unauthorized Location Access"
 
 ```
 
 ### 7. `protect_user_management.sh`
-**Yang Dicegah:**
-- Hapus user lain (kecuali admin ID 1)
-- Ubah data user sensitif (email, password, dll)
+**What It Prevents:**
+- Deleting other users (except admin ID 1)
+- Modifying sensitive user data (email, password, etc.)
 
-**File yang Dimodif:**
+**Modified Files:**
 - `UserController.php`
 
-**Pesan Error:**
+**Error Message:**
 ```
 
-"❌ Hanya admin ID 1 yang dapat menghapus user lain!"
-"⚠️Data hanya bisa diubah oleh admin ID 1."
+"❌ Only admin ID 1 can delete other users!"
+"⚠️Data can only be modified by admin ID 1."
 
 ```
 
-## 🚀 Cara Pakai
+## 🚀 How to Use
 
-### Opsi 1: Pasang Semua Sekaligus
+### Option 1: Install All at Once
 ```bash
-# Download script all-in-one
+# Download all-in-one script
 wget https://raw.githubusercontent.com/depanSYZ/pterpdactyl-protect/installall.sh
 
-# Kasih permission
+# Give permission
 chmod +x install_protect_all.sh
 
-# Jalankan sebagai root
+# Run as root
 sudo ./install_protect_all.sh
 ```
 
-Opsi 2: Pasang Satu-Satu
+Option 2: Install One by One
 
 ```bash
-# Download semua script terpisah
+# Download individual scripts
 wget https://raw.githubusercontent.com/depanSYZ/pterpdactyl-protect/install2.sh
 wget https://raw.githubusercontent.com/depanSYZ/pterpdactyl-protect/install1.sh
-# ... dan seterusnya
+# ... and so on
 
-# Kasih permission
+# Give permission
 chmod +x protect_*.sh
 
-# Jalankan sesuai kebutuhan
+# Run as needed
 sudo ./protect_server_delete_modify.sh
 sudo ./protect_settings_access.sh
-# ... dan seterusnya
+# ... and so on
 ```
 
-⚠️ Yang Perlu Diperhatiin
+⚠️ Important Notes
 
-Sebelum Install:
+Before Installation:
 
-· Backup panel dulu, siapa tau ada yang error
-· Pastikan panel Pterodactyl udah terinstall di path default /var/www/pterodactyl
-· Pastikan kamu login sebagai root
+· Backup your panel first, in case of errors
+· Ensure Pterodactyl panel is installed in default path /var/www/pterodactyl
+· Make sure you're logged in as root
 
-Setelah Install:
+After Installation:
 
-· Script bakal bikin backup file original dengan format filename.bak_TIMESTAMP
-· Kalo mau restore, tinggal rename/balikin file backup-nya
-· Untuk apply perubahan, mungkin perlu restart queue: php artisan queue:restart
+· Script will create backup of original files with format filename.bak_TIMESTAMP
+· To restore, simply rename/restore the backup files
+· To apply changes, you may need to restart queue: php artisan queue:restart
 
-Yang Bisa Akses:
+Access Permissions:
 
-· Hanya user dengan ID 1 yang bisa akses semua fitur
-· Admin lain cuma bisa:
-  · Lihat & manage server mereka sendiri
-  · Akses file manager server mereka sendiri
-  · Gak bisa hapus/ubah server orang
+· Only user with ID 1 can access all features
+· Other admins can only:
+  · View & manage their own servers
+  · Access file manager for their own servers
+  · Cannot delete/modify others' servers
 
 🔧 Troubleshooting
 
-Kalo Error Permission:
+If Permission Error:
 
 ```bash
 sudo chmod +x *.sh
 sudo ./script_name.sh
 ```
 
-Kalo File Gak Ketemu:
+If Files Not Found:
 
-· Pastikan Pterodactyl terinstall di /var/www/pterodactyl
-· Cek path manual: ls -la /var/www/pterodactyl/app/
+· Ensure Pterodactyl is installed in /var/www/pterodactyl
+· Check path manually: ls -la /var/www/pterodactyl/app/
 
-Kalo Mau Uninstall:
+If You Want to Uninstall:
 
-· Delete file yang dimodif, terus rename file backup:
+· Delete modified files, then rename backup files:
 
 ```bash
 mv /var/www/pterodactyl/app/Services/Servers/ServerDeletionService.php.bak_20241212_120000 /var/www/pterodactyl/app/Services/Servers/ServerDeletionService.php
 ```
 
-🎭 Fitur Tambahan
+🎭 Additional Features
 
 Auto Backup:
 
-Setiap file yang dimodif otomatis dibackup dengan timestamp, jadi aman kalo mau rollback.
+Every modified file is automatically backed up with timestamp, safe for rollback.
 
-Error Message "Kasar":
+Custom Error Messages:
 
-Pesan error sengaja dibuat kasar buat ngejailin admin yang iseng, bisa diubah sesuai selera.
+Error messages can be customized according to your preference.
 
-Restrict Horizontal & Vertical:
+Horizontal & Vertical Restrictions:
 
-· Horizontal: User biasa gak bisa akses server/user lain
-· Vertical: Admin biasa gak bisa akses fitur system (nodes, nests, settings)
+· Horizontal: Regular users cannot access other servers/users
+· Vertical: Regular admins cannot access system features (nodes, nests, settings)
 
 📞 Support
 
-Kalo ada yang error atau mau tanya-tanya:
+If you encounter errors or have questions:
 
-· Buat issue di GitHub
-· Atau contact langsung
+· Create an issue on GitHub
+· Or contact directly
 
 ⚖️ Disclaimer
 
-Script ini dibuat buat keamanan panel kamu. Gunakan dengan bijak, jangan disalahgunakan. Author gak tanggung jawab kalo ada yang error atau panel jadi rusak, selalu backup dulu sebelum install!
+These scripts are created for your panel security. Use wisely, don't misuse. Author is not responsible for any errors or panel damage, always backup before installation!
 
 ---
 
-Dibuat dengan ❤️ buat yang mau panel Pterodactyl-nya aman dan terkendali
+Made with ❤️ for those who want their Pterodactyl panel secure and under control
 
 ```
