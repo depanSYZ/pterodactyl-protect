@@ -86,7 +86,7 @@ class ServerDeletionService
                 }
 
                 if ((int) $ownerId !== (int) $user->id) {
-                    throw new DisplayException('❌Akses ditolak: Anda hanya dapat menghapus server milik Anda sendiri');
+                    throw new DisplayException('Akses ditolak: Lu Siapa mek? enak aja mau hapus 😹, protect by @depstore11.');
                 }
             }
         }
