@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# install_protect_1.sh - Pterodactyl Protect (Anti Delete Server)
-# Proteksi: Anti Delete Server - hanya owner yang bisa hapus server
+# protect_server_delete_modify.sh - Proteksi: Anti Delete & Modifikasi Server
 set -Eeuo pipefail
 
 TS="$(date -u +'%Y-%m-%d-%H-%M-%S')"
@@ -16,21 +15,19 @@ backup_then() {
   local TARGET="$1"
   local DIR; DIR="$(dirname "$TARGET")"
   mkdir -p "$DIR"
-  chmod 755 "$DIR" || true
   if [[ -f "$TARGET" ]]; then
     local BAK="${TARGET}.bak_${TS}"
-    cp "$TARGET" "$BAK"
-    echo "📦 Backup file lama: $BAK"
+    mv "$TARGET" "$BAK"
+    echo "📦 Backup: $BAK"
   fi
 }
 
-echo "🚀 Memasang Proteksi 1: Anti Delete Server"
-echo "🕒 Timestamp: $TS"
-echo
+require_root
 
-# ========== Services/Servers/ServerDeletionService.php ==========
+echo "🚀 Memasang proteksi: Anti Delete & Modifikasi Server"
+
+# ServerDeletionService.php
 TARGET="/var/www/pterodactyl/app/Services/Servers/ServerDeletionService.php"
-echo "➡️  Proteksi: Anti Delete Server"
 backup_then "$TARGET"
 cat >"$TARGET" <<'PHP'
 <?php
@@ -72,8 +69,6 @@ class ServerDeletionService
     {
         $user = Auth::user();
 
-        // 🔒 Hanya Admin ID=1 boleh hapus server siapa saja.
-        // User biasa: hanya boleh hapus server miliknya sendiri.
         if ($user) {
             if ($user->id !== 1) {
                 $ownerId = $server->owner_id
@@ -86,7 +81,7 @@ class ServerDeletionService
                 }
 
                 if ((int) $ownerId !== (int) $user->id) {
-                    throw new DisplayException('❌Akses ditolak: Anda hanya dapat menghapus server milik Anda sendiri');
+                    throw new DisplayException('❌Akses ditolak:  Wawes Sikontol Mau hapus server orang 😹,Anda hanya dapat menghapus server milik Anda sendiri @protect depstore');
                 }
             }
         }
@@ -118,10 +113,66 @@ class ServerDeletionService
 }
 PHP
 chmod 644 "$TARGET"
-echo "✅ Berhasil dipasang: Anti Delete Server"
-echo
+echo "✅ ServerDeletionService.php selesai."
 
-echo "🎉 Proteksi 1 berhasil terpasang!"
-echo "🗂️ File lama dibackup dengan suffix: .bak_${TS}"
-echo ""
-echo "⚠️ Jangan lupa jalankan: php artisan optimize:clear"
+# DetailsModificationService.php
+TARGET="/var/www/pterodactyl/app/Services/Servers/DetailsModificationService.php"
+backup_then "$TARGET"
+cat >"$TARGET" <<'PHP'
+<?php
+
+namespace Pterodactyl\Services\Servers;
+
+use Illuminate\Support\Arr;
+use Pterodactyl\Models\Server;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\ConnectionInterface;
+use Pterodactyl\Traits\Services\ReturnsUpdatedModels;
+use Pterodactyl\Repositories\Wings\DaemonServerRepository;
+use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
+
+class DetailsModificationService
+{
+    use ReturnsUpdatedModels;
+
+    public function __construct(
+        private ConnectionInterface $connection,
+        private DaemonServerRepository $serverRepository
+    ) {}
+
+    /**
+     * @throws \Throwable
+     */
+    public function handle(Server $server, array $data): Server
+    {
+        $user = Auth::user();
+        if (!$user || $user->id !== 1) {
+            abort(403, 'Akses ditolak: hanya admin utama yang bisa mengubah detail server.');
+        }
+
+        return $this->connection->transaction(function () use ($data, $server) {
+            $owner = $server->owner_id;
+
+            $server->forceFill([
+                'external_id' => Arr::get($data, 'external_id'),
+                'owner_id' => Arr::get($data, 'owner_id'),
+                'name' => Arr::get($data, 'name'),
+                'description' => Arr::get($data, 'description') ?? '',
+            ])->saveOrFail();
+
+            if ($server->owner_id !== $owner) {
+                try {
+                    $this->serverRepository->setServer($server)->revokeUserJTI($owner);
+                } catch (DaemonConnectionException $exception) {
+                    // Wings offline → abaikan
+                }
+            }
+
+            return $server;
+        });
+    }
+}
+PHP
+chmod 644 "$TARGET"
+echo "✅ DetailsModificationService.php selesai."
+echo "🎉 Proteksi Anti Delete & Modifikasi Server terpasang!"
